@@ -4,7 +4,6 @@ player = {}
 function love.load()
 	playerX = 32
 	playerY = 416
-	X = 0
 	playerSpeed = 200
 	player = love.graphics.newImage("res/player.png")
 	playerSprite = love.graphics.newQuad(0, 32, 32, 32, player:getDimensions())
@@ -44,6 +43,14 @@ function love.update(dt)
     if playerY > playerGround then    -- Check if player jumps
 		playerYVelocity = 0
     	playerY = playerGround 
+	end
+
+	if playerX < 0 then
+		playerX = 0
+	end
+
+	if playerX > platform.width / 2 - 32 then
+		playerX = platform.width / 2 - 32
 	end
 end
 
