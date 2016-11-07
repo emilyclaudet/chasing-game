@@ -3,6 +3,8 @@ player = {}
 posts = {}
 
 function love.load()
+	state = 'play'
+
 	playerX = 32
 	playerY = 416
 	playerSpeed = 200
@@ -27,6 +29,10 @@ function love.load()
 end
 
 function love.update(dt)
+	if state ~= 'play' then
+		return 
+	end
+
 	if love.keyboard.isDown('left') then
 		playerX = playerX - (playerSpeed * dt)
 	end
@@ -70,6 +76,11 @@ function love.update(dt)
 			postX = postX - postVelocity * dt	
 		end
 	end
+
+	-- Make player die if they hit the post
+	if playerX > postX then
+		state = lose
+	end
 end
 
 function love.keyreleased(key)
@@ -80,6 +91,10 @@ end
 
 function love.draw()
 	love.graphics.setColor(255, 255, 255)
+	if state == 'lose' then
+		draw_lose_screen()
+	end
+
 	love.graphics.draw(player, playerSprite, playerX, playerY)
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
@@ -87,7 +102,11 @@ function love.draw()
 	love.graphics.rectangle('fill', postX, postY, postWidth, postHeight)
 end
 
+function draw_lose_screen()
+	lose = "YOU DIED!!!"
+	love.graphics.print(lose, 300, 300, 0, 5, 5)
+end
+
 function love.quit()
     print('Quitting Chasing Game...')
 end
-
