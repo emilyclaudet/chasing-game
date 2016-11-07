@@ -1,5 +1,6 @@
 platform = {}
 player = {}
+posts = {}
 
 function love.load()
 	playerX = 32
@@ -11,12 +12,18 @@ function love.load()
 	platform.width = love.graphics.getWidth()
 	platform.height = love.graphics.getHeight() 
 	platform.x = 0                              
-	platform.y = platform.height / 1.32
+	platform.y = platform.height / 1.34
 
 	playerGround = playerY     -- This makes the character land on the plaform.
 	playerYVelocity = 0
 	playerJumpHeight = -350
 	playerGravity = -1000
+
+	postWidth = 28
+	postHeight = 48
+	postVelocity = 200
+	postX = love.graphics.getWidth()
+	postY = 416 - postHeight/2
 end
 
 function love.update(dt)
@@ -52,6 +59,17 @@ function love.update(dt)
 	if playerX > platform.width / 2 - 32 then
 		playerX = platform.width / 2 - 32
 	end
+	
+	elapsedTime = 0 
+	elapsedTime = elapsedTime + dt
+
+	if elapsedTime > 0 then
+		if postX < 0 then
+			postX = love.graphics.getWidth()
+		else
+			postX = postX - postVelocity * dt	
+		end
+	end
 end
 
 function love.keyreleased(key)
@@ -61,9 +79,12 @@ function love.keyreleased(key)
 end
 
 function love.draw()
+	love.graphics.setColor(255, 255, 255)
 	love.graphics.draw(player, playerSprite, playerX, playerY)
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
+	love.graphics.setColor(255, 0, 0)
+	love.graphics.rectangle('fill', postX, postY, postWidth, postHeight)
 end
 
 function love.quit()
