@@ -62,8 +62,8 @@ function love.update(dt)
 		playerX = 0
 	end
 
-	if playerX > platform.width / 2 - 32 then
-		playerX = platform.width / 2 - 32
+	if playerX > love.graphics.getWidth() / 2 - 32 then
+		playerX = love.graphics.getWidth() / 2 - 32
 	end
 	
 	elapsedTime = 0 
@@ -78,8 +78,8 @@ function love.update(dt)
 	end
 
 	-- Make player die if they hit the post
-	if playerX > postX then
-		state = lose
+	if check_collision() == true then
+		state = 'lose'
 	end
 end
 
@@ -90,21 +90,43 @@ function love.keyreleased(key)
 end
 
 function love.draw()
+	--Background
+	love.graphics.setColor(0, 255, 255)
+	love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+	-- Player
 	love.graphics.setColor(255, 255, 255)
+	love.graphics.draw(player, playerSprite, playerX, playerY)
+	-- Ground
+	love.graphics.setColor(255, 255, 255)
+	love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
+	-- Posts
+	love.graphics.setColor(255, 0, 0)
+	love.graphics.rectangle('fill', postX, postY, postWidth, postHeight)
+
 	if state == 'lose' then
 		draw_lose_screen()
 	end
-
-	love.graphics.draw(player, playerSprite, playerX, playerY)
-	love.graphics.setColor(255, 255, 255)
-	love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
-	love.graphics.setColor(255, 0, 0)
-	love.graphics.rectangle('fill', postX, postY, postWidth, postHeight)
 end
 
 function draw_lose_screen()
-	lose = "YOU DIED!!!"
-	love.graphics.print(lose, 300, 300, 0, 5, 5)
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.print("You died", 10, 10, 0, 1, 1)
+end
+
+-- Returns true if player overlaps with post
+function check_collision(x1,y1,w1,h1,x2,y2,w2,h2)
+	x1 = playerX - 2
+	y1 = playerY - 2
+	w1 = 28
+	h1 = 28
+	x2 = postX
+	y2 = postY
+	w2 = postWidth
+	h2 = postHeight
+	return x1 < x2 + w2 and
+           x2 < x1 + w1 and
+           y1 < y2 + h2 and
+           y2 < y1 + h1
 end
 
 function love.quit()
