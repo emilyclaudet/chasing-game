@@ -4,7 +4,8 @@ posts = {}
 
 function love.load()
 	state = 'play'
-
+	jumpSound = love.audio.newSource('res/jumpSound.wav', 'static' )
+	loseSound = love.audio.newSource('res/loseSound.wav', 'static' )
 	playerX = 32
 	playerY = 416
 	playerSpeed = 200
@@ -44,6 +45,7 @@ function love.update(dt)
 	if love.keyboard.isDown('space') then
 		if  playerYVelocity == 0 then					-- Check player is on the ground
 			playerYVelocity = playerJumpHeight		-- The player's Y-Axis Velocity is set to it's Jump Height.
+			jumpSound:play()
 		end
 	end
 
@@ -79,6 +81,7 @@ function love.update(dt)
 
 	-- Make player die if they hit the post
 	if check_collision() == true then
+		loseSound:play()
 		state = 'lose'
 	end
 end
