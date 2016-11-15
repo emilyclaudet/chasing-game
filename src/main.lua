@@ -1,30 +1,20 @@
 require 'post'
+require 'player'
 
 platform = {}
-player = {}
 
 function love.load()
 	state = 'play'
 	jumpSound = love.audio.newSource('res/jumpSound.wav', 'static' )
 	loseSound = love.audio.newSource('res/loseSound.wav', 'static' )
 	scoreSound = love.audio.newSource('res/scoreIncrease.wav', 'static' )
-	playerX = 32
-	playerY = 416
-	playerSpeed = 200
-	player = love.graphics.newImage("res/player.png")
-	playerSprite = love.graphics.newQuad(0, 32, 32, 32, player:getDimensions())
-
 	platform.width = love.graphics.getWidth()
 	platform.height = love.graphics.getHeight() 
 	platform.x = 0                              
 	platform.y = platform.height / 1.34
-
-	playerGround = playerY     -- This makes the character land on the plaform.
-	playerYVelocity = 0
-	playerJumpHeight = -350
-	playerGravity = -1000
 	score = 0
 
+	load_player()
 	load_post()
 end
 
@@ -33,41 +23,10 @@ function love.update(dt)
 		return 
 	end
 
-	if love.keyboard.isDown('left') then
-		playerX = playerX - (playerSpeed * dt)
-	end
-
-	if love.keyboard.isDown('right') then
-		playerX = playerX + (playerSpeed * dt)
-	end
-
-	if love.keyboard.isDown('space') then
-		if  playerYVelocity == 0 then					-- Check player is on the ground
-			playerYVelocity = playerJumpHeight		-- The player's Y-Axis Velocity is set to it's Jump Height.
-			jumpSound:play()
-		end
-	end
-
-    if playerYVelocity ~= 0 then                                      -- The game checks if player has "jumped" and left the ground.
-		playerY = playerY + playerYVelocity * dt                -- This makes the character ascend/jump.
-		playerYVelocity = playerYVelocity - playerGravity * dt -- This applies the gravity to the character.
-	end
- 
-    -- This is in charge of collision, making sure that the character lands on the ground.
-    if playerY > playerGround then    -- Check if player jumps
-		playerYVelocity = 0
-    	playerY = playerGround 
-	end
-
-	if playerX < 0 then
-		playerX = 0
-	end
-
-	if playerX > love.graphics.getWidth() / 2 - 32 then
-		playerX = love.graphics.getWidth() / 2 - 32
-	end
-
+	update_player(dt)
+    check_player_on_ground(dt)
 	regenerate_post(dt)
+	limit_player(dt)
 
 	-- Make player die if they hit the post
 	if check_collision() == true then
@@ -97,8 +56,7 @@ function love.draw()
 	love.graphics.setColor(0, 255, 255)
 	love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 	-- Player
-	love.graphics.setColor(255, 255, 255)
-	love.graphics.draw(player, playerSprite, playerX, playerY)
+	draw_player()
 	-- Ground
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
