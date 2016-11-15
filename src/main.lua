@@ -1,6 +1,7 @@
+require 'post'
+
 platform = {}
 player = {}
-posts = {}
 
 function love.load()
 	state = 'play'
@@ -22,13 +23,9 @@ function love.load()
 	playerYVelocity = 0
 	playerJumpHeight = -350
 	playerGravity = -1000
-
-	postWidth = 28
-	postHeight = 48
-	postVelocity = 200
-	postX = love.graphics.getWidth()
-	postY = 416 - postHeight/2
 	score = 0
+
+	load_post()
 end
 
 function love.update(dt)
@@ -69,17 +66,8 @@ function love.update(dt)
 	if playerX > love.graphics.getWidth() / 2 - 32 then
 		playerX = love.graphics.getWidth() / 2 - 32
 	end
-	
-	elapsedTime = 0 
-	elapsedTime = elapsedTime + dt
 
-	if elapsedTime > 0 then
-		if postX < 0 then
-			postX = love.graphics.getWidth()
-		else
-			postX = postX - postVelocity * dt	
-		end
-	end
+	regenerate_post(dt)
 
 	-- Make player die if they hit the post
 	if check_collision() == true then
@@ -115,8 +103,7 @@ function love.draw()
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
 	-- Posts
-	love.graphics.setColor(255, 0, 0)
-	love.graphics.rectangle('fill', postX, postY, postWidth, postHeight)
+	draw_post()
 	-- Score
 	love.graphics.print(score, 10, 20, 0, 1, 1)
 
