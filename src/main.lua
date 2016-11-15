@@ -6,6 +6,7 @@ function love.load()
 	state = 'play'
 	jumpSound = love.audio.newSource('res/jumpSound.wav', 'static' )
 	loseSound = love.audio.newSource('res/loseSound.wav', 'static' )
+	scoreSound = love.audio.newSource('res/scoreIncrease.wav', 'static' )
 	playerX = 32
 	playerY = 416
 	playerSpeed = 200
@@ -27,6 +28,7 @@ function love.load()
 	postVelocity = 200
 	postX = love.graphics.getWidth()
 	postY = 416 - postHeight/2
+	score = 0
 end
 
 function love.update(dt)
@@ -84,6 +86,16 @@ function love.update(dt)
 		loseSound:play()
 		state = 'lose'
 	end
+
+	-- Score increases everytime a successful jump
+	if postX < 0 then
+		score = score + 1
+		scoreSound:play()
+	end
+
+	if score == 2 then
+		state = 'win'
+	end
 end
 
 function love.keyreleased(key)
@@ -105,15 +117,25 @@ function love.draw()
 	-- Posts
 	love.graphics.setColor(255, 0, 0)
 	love.graphics.rectangle('fill', postX, postY, postWidth, postHeight)
+	-- Score
+	love.graphics.print(score, 10, 20, 0, 1, 1)
 
 	if state == 'lose' then
 		draw_lose_screen()
+	end
+	if state == 'win' then
+		draw_win_screen()
 	end
 end
 
 function draw_lose_screen()
 	love.graphics.setColor(0, 0, 0)
 	love.graphics.print("You died", 10, 10, 0, 1, 1)
+end
+
+function draw_win_screen()
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.print("YOU WIN", 100, 100, 0, 2, 2)
 end
 
 -- Returns true if player overlaps with post
