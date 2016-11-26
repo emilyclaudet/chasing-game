@@ -1,5 +1,3 @@
-require 'player'
-
 posts = {}
 
 function load_post()

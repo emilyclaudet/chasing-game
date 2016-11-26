@@ -1,5 +1,6 @@
 require 'post'
 require 'player'
+require 'gamestate'
 
 platform = {}
 
@@ -13,7 +14,6 @@ function love.load()
 	platform.x = 0                              
 	platform.y = platform.height / 1.34
 	score = 0
-
 	load_player()
 	load_post()
 end
@@ -22,27 +22,12 @@ function love.update(dt)
 	if state ~= 'play' then
 		return 
 	end
-
 	update_player(dt)
     check_player_on_ground(dt)
 	regenerate_post(dt)
 	limit_player(dt)
-
-	-- Score increases everytime a successful jump
-	if postX < 0 then
-		score = score + 1
-		scoreSound:play()
-	end
-	
-	-- Make player die if they hit the post
-	if check_collision() == true then
-		loseSound:play()
-		state = 'lose'
-	end
-
-	if score == 3 then
-		state = 'win'
-	end
+	score_increase(dt)
+	post_state(dt)
 end
 
 function love.keyreleased(key)
@@ -64,25 +49,9 @@ function love.draw()
 	draw_post()
 	-- Score
 	love.graphics.print(score, 10, 20, 0, 1, 1)
-
-	if state == 'lose' then
-		draw_lose_screen()
-	end
-	if state == 'win' then
-		draw_win_screen()
-	end
+	-- Draw things when you lose or win
+	end_game_state()
 end
-
-function draw_lose_screen()
-	love.graphics.setColor(0, 0, 0)
-	love.graphics.print("You died", 10, 10, 0, 1, 1)
-end
-
-function draw_win_screen()
-	love.graphics.setColor(0, 0, 0)
-	love.graphics.print("YOU WIN", 100, 100, 0, 2, 2)
-end
-
 
 function love.quit()
     print('Quitting Chasing Game...')
