@@ -40,7 +40,7 @@ function love.update(dt)
 		state = 'lose'
 	end
 
-	if score == 2 then
+	if score == 3 then
 		state = 'win'
 	end
 end
@@ -83,21 +83,6 @@ function draw_win_screen()
 	love.graphics.print("YOU WIN", 100, 100, 0, 2, 2)
 end
 
--- Returns true if player overlaps with post
-function check_collision(x1,y1,w1,h1,x2,y2,w2,h2)
-	x1 = playerX - 2
-	y1 = playerY - 2
-	w1 = 28
-	h1 = 28
-	x2 = postX
-	y2 = postY
-	w2 = postWidth
-	h2 = postHeight
-	return x1 < x2 + w2 and
-           x2 < x1 + w1 and
-           y1 < y2 + h2 and
-           y2 < y1 + h1
-end
 
 function love.quit()
     print('Quitting Chasing Game...')
