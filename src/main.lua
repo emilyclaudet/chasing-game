@@ -22,11 +22,19 @@ function love.load()
 	playerJumpHeight = -350
 	playerGravity = -1000
 
+	gap = 200
 	postWidth = 28
 	postHeight = 48
 	postVelocity = 200
 	postX = love.graphics.getWidth()
 	postY = 416 - postHeight/2
+
+	postWidth2 = 28
+	postHeight2 = 48
+	postVelocity2 = 200
+	postX2 = love.graphics.getWidth() + gap
+	postY2 = 416 - postHeight/2
+
 end
 
 function love.update(dt)
@@ -60,10 +68,10 @@ function love.update(dt)
     	playerY = playerGround 
 	end
 
+	-- Controls player's range to not walk off edge of screen
 	if playerX < 0 then
 		playerX = 0
 	end
-
 	if playerX > love.graphics.getWidth() / 2 - 32 then
 		playerX = love.graphics.getWidth() / 2 - 32
 	end
@@ -79,8 +87,16 @@ function love.update(dt)
 		end
 	end
 
+	if elapsedTime > 0 then
+		if postX2 < 0 then
+			postX2 = love.graphics.getWidth()
+		else
+			postX2 = postX2 - postVelocity2 * dt	
+		end
+	end
+
 	-- Make player die if they hit the post
-	if check_collision() == true then
+	if check_collision_post1() == true or check_collision_post2() == true then
 		loseSound:play()
 		state = 'lose'
 	end
@@ -102,9 +118,12 @@ function love.draw()
 	-- Ground
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.rectangle('fill', platform.x, platform.y, platform.width, platform.height)
-	-- Posts
+	-- Post 1
 	love.graphics.setColor(255, 0, 0)
 	love.graphics.rectangle('fill', postX, postY, postWidth, postHeight)
+	-- Post 2
+	love.graphics.setColor(255, 0, 0)
+	love.graphics.rectangle('fill', postX2, postY2, postWidth2, postHeight2)
 
 	if state == 'lose' then
 		draw_lose_screen()
@@ -116,8 +135,8 @@ function draw_lose_screen()
 	love.graphics.print("You died", 10, 10, 0, 1, 1)
 end
 
--- Returns true if player overlaps with post
-function check_collision(x1,y1,w1,h1,x2,y2,w2,h2)
+-- Returns true if player overlaps with post 1
+function check_collision_post1(x1,y1,w1,h1,x2,y2,w2,h2)
 	x1 = playerX - 2
 	y1 = playerY - 2
 	w1 = 28
@@ -126,6 +145,22 @@ function check_collision(x1,y1,w1,h1,x2,y2,w2,h2)
 	y2 = postY
 	w2 = postWidth
 	h2 = postHeight
+	return x1 < x2 + w2 and
+           x2 < x1 + w1 and
+           y1 < y2 + h2 and
+           y2 < y1 + h1
+end
+
+-- Returns true if player overlaps with post 2
+function check_collision_post2(x1,y1,w1,h1,x2,y2,w2,h2)
+	x1 = playerX - 2
+	y1 = playerY - 2
+	w1 = 28
+	h1 = 28
+	x2 = postX2
+	y2 = postY2
+	w2 = postWidth2
+	h2 = postHeight2
 	return x1 < x2 + w2 and
            x2 < x1 + w1 and
            y1 < y2 + h2 and
