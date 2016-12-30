@@ -28,19 +28,19 @@ function love.update(dt)
 	regenerate_post(dt)
 	limit_player(dt)
 
-	-- Score increases everytime a successful jump
+	-- Score increases everytime a successful jump over a post
 	if postX < 0 then
 		score = score + 1
 		scoreSound:play()
 	end
-	
+
 	-- Make player die if they hit the post
 	if check_collision() == true then
 		loseSound:play()
 		state = 'lose'
 	end
 
-	if score == 2 then
+	if score == 10 then
 		state = 'win'
 	end
 end

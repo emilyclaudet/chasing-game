@@ -15,6 +15,8 @@ function regenerate_post(dt)
 	if elapsedTime > 0 then
 		if postX < 0 then
 			postX = love.graphics.getWidth()
+			postY = math.random( 416 - 48 , 416 - 10)
+			postHeight = math.random(20, 48)
 		else
 			postX = postX - postVelocity * dt	
 		end
